@@ -13,6 +13,7 @@
 - *Vulnerability Checks:* Performs lightweight security checks on common ports/services.
 - *DNS Reconnaissance:* Queries DNS records for target domains.
 - *Subdomain Enumeration:* Discovers active subdomains.
+- *Web Security Testing:* Analyzes HTTP/HTTPS security headers and scans for sensitive endpoints/paths.
 - *AI Analysis Integration:* Integrates with local AI models (Qwen) for security report generation.
 
 ---
