@@ -8,6 +8,7 @@ from modules.ai_analyzer import analyze_with_ai
 from modules.report_exporter import save_security_report
 from modules.subdomain_scanner import run_subdomain_enum
 from modules.vuln_scanner import VulnerabilityScanner
+from modules.web_tester import WebTester
 
 def main():
     log_banner()
@@ -18,6 +19,7 @@ def main():
     parser.add_argument("-d", "--domain", dest="domain", help="Target Domain for DNS Reconnaissance")
     parser.add_argument("-s", "--subdomain", dest="subdomain", help="Target Domain for Subdomain Enumeration")
     parser.add_argument("-v", "--vuln", action="store_true", help="Run Vulnerability Scanner checks")
+    parser.add_argument("-w", "--web", action="store_true", help="Run Web Security Tester")
     parser.add_argument("-o", "--output", action="store_true", help="Automatically save the AI report to a markdown file")
     parser.add_argument("-r", "--report", action="store_true", help="Generate AI security analysis and save report")
     args = parser.parse_args()
@@ -33,7 +35,34 @@ def main():
     target_name = ""
     scan_type = ""
 
-    if args.target:
+    if args.web:
+        if not args.target:
+            log_error("Target URL/IP is required for Web testing! Use -t <URL>")
+            return
+    
+        log_info(f"Running Web Security Tests on {args.target}...")
+        tester = WebTester(args.target)
+        results = tester.run_web_tests()
+    
+        log_succes("=== Web Security Test Results ===")
+        print(f"[*] Server Info: {results['server_info']}")
+    
+        print("\n[+] Security Headers:")
+        for h in results["security_headers"]:
+            if h["status"] == "Present":
+                print(f"  [✔️​​] {h['header']}: Present")
+            else:
+                print(f"  [❌​] {h['header']}: Missing")
+    
+        print("\n[+] Sensitive Paths Found:")
+        if results["found_paths"]:
+            for p in results["found_paths"]:
+                print(f"  [!] Path: {p['path']} (Status: {p['code']})")
+        else:
+            print("  [-] No common sensitive paths found.")
+    
+
+    elif args.target:
         open_ports_summary = run_network_scan(args.target)
         scan_details = f"Target IP: {args.target}\nDiscovered open ports and banners: {open_ports_summary}"
         target_name = args.target
@@ -56,6 +85,7 @@ def main():
         target_name = args.target
         scan_type = "VulnScan"
 
+    
     elif args.domain:
        dns_results_text = run_dns_recon(args.domain)
        if dns_results_text:
