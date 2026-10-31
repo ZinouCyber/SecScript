@@ -19,7 +19,7 @@ def main():
     parser.add_argument("-d", "--domain", dest="domain", help="Target Domain for DNS Reconnaissance")
     parser.add_argument("-s", "--subdomain", dest="subdomain", help="Target Domain for Subdomain Enumeration")
     parser.add_argument("-v", "--vuln", action="store_true", help="Run Vulnerability Scanner checks")
-    parser.add_argument("-w", "--web", action="store_true", help="Run Web Security Tester")
+    parser.add_argument("-w", "--web", help="Run Web Security Tester")
     parser.add_argument("-o", "--output", action="store_true", help="Automatically save the AI report to a markdown file")
     parser.add_argument("-r", "--report", action="store_true", help="Generate AI security analysis and save report")
     args = parser.parse_args()
